@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoCity Connect | Sustainable Urban Services</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .leaflet-container {
+            height: 400px;
+            width: 100%;
+            border-radius: 0.5rem;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 max-w-7xl">
+
+        <!-- Header -->
+        <header class="bg-white rounded-lg shadow p-6 mb-6 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-green-600">EcoCity Connect</h1>
+                <p class="text-gray-500">Your partner for a sustainable city life.</p>
+            </div>
+            <div class="text-right">
+                 <p class="font-semibold" id="current-time"></p>
+                 <p class="text-sm text-gray-500">New Delhi, India</p>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- Left Column: Navigation & Info -->
+            <div class="md:col-span-1 space-y-6">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold mb-4 border-b pb-2">City Services</h2>
+                    <nav class="space-y-2">
+                        <button onclick="showView('transport')" class="w-full text-left flex items-center p-3 rounded-lg hover:bg-gray-200 transition-colors">
+                            <svg class="w-6 h-6 mr-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                            Public Transport
+                        </button>
+                        <button onclick="showView('waste')" class="w-full text-left flex items-center p-3 rounded-lg hover:bg-gray-200 transition-colors">
+                             <svg class="w-6 h-6 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            Waste Collection
+                        </button>
+                        <button onclick="showView('routes')" class="w-full text-left flex items-center p-3 rounded-lg hover:bg-gray-200 transition-colors">
+                            <svg class="w-6 h-6 mr-3 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 16.382V5.618a1 1 0 00-1.447-.894L15 7m-6 10l6-3m0 0V7"></path></svg>
+                            Safe Routes
+                        </button>
+                        <button onclick="showView('carbon')" class="w-full text-left flex items-center p-3 rounded-lg hover:bg-gray-200 transition-colors">
+                            <svg class="w-6 h-6 mr-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
+                            Carbon Footprint
+                        </button>
+                         <button onclick="showView('feedback')" class="w-full text-left flex items-center p-3 rounded-lg hover:bg-gray-200 transition-colors">
+                           <svg class="w-6 h-6 mr-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                            Citizen Feedback
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Right Column: Main View Area -->
+            <div class="md:col-span-2 space-y-6">
+                
+                <!-- Transport View -->
+                <div id="transport-view" class="view-content bg-white rounded-lg shadow p-6 fade-in">
+                    <h2 class="text-2xl font-bold mb-4">Public Transport</h2>
+                    <p class="text-gray-600 mb-4">Real-time bus and metro tracking. Click on a route to see live locations.</p>
+                    <div id="transport-map" class="leaflet-container mb-4"></div>
+                    <div id="bus-routes" class="space-y-2">
+                        <!-- Bus routes will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Waste Collection View -->
+                <div id="waste-view" class="view-content bg-white rounded-lg shadow p-6 hidden fade-in">
+                    <h2 class="text-2xl font-bold mb-4">Waste Collection Schedule</h2>
+                    <p class="text-gray-600 mb-4">Find your neighborhood's waste collection days.</p>
+                    <input type="text" id="waste-search" placeholder="Enter your neighborhood (e.g., Connaught Place)" class="w-full p-2 border rounded-lg mb-4">
+                    <div id="waste-schedule">
+                        <!-- Schedule info will appear here -->
+                    </div>
+                </div>
+
+                <!-- Safe Routes View -->
+                <div id="routes-view" class="view-content bg-white rounded-lg shadow p-6 hidden fade-in">
+                    <h2 class="text-2xl font-bold mb-4">Safe Routes Planner</h2>
+                    <p class="text-gray-600 mb-4">Find well-lit and monitored routes for walking or cycling.</p>
+                     <div id="routes-map" class="leaflet-container"></div>
+                </div>
+
+                <!-- Carbon Footprint View -->
+                <div id="carbon-view" class="view-content bg-white rounded-lg shadow p-6 hidden fade-in">
+                    <h2 class="text-2xl font-bold mb-4">Carbon Footprint Calculator</h2>
+                    <form id="carbon-form" class="space-y-4">
+                        <div>
+                            <label for="electricity" class="block font-medium">Monthly Electricity (kWh)</label>
+                            <input type="number" id="electricity" class="w-full p-2 border rounded-lg" placeholder="e.g., 200">
+                        </div>
+                         <div>
+                            <label for="transport-km" class="block font-medium">Daily commute (km, round trip)</label>
+                            <input type="number" id="transport-km" class="w-full p-2 border rounded-lg" placeholder="e.g., 20">
+                        </div>
+                        <button type="submit" class="w-full bg-green-600 text-white p-3 rounded-lg font-semibold hover:bg-green-700">Calculate</button>
+                    </form>
+                    <div id="carbon-result" class="mt-6 text-center hidden">
+                        <p class="text-lg">Your estimated monthly carbon footprint is:</p>
+                        <p class="text-3xl font-bold text-green-600"><span id="footprint-value"></span> kg CO2e</p>
+                        <p class="text-sm text-gray-500 mt-2">This is equivalent to <span id="tree-equivalent"></span> trees needed to absorb this carbon in a year.</p>
+                    </div>
+                </div>
+
+                 <!-- Feedback View -->
+                <div id="feedback-view" class="view-content bg-white rounded-lg shadow p-6 hidden fade-in">
+                    <h2 class="text-2xl font-bold mb-4">Citizen Feedback</h2>
+                    <p class="text-gray-600 mb-4">Report issues or provide suggestions to improve our city.</p>
+                    <form id="feedback-form" class="space-y-4">
+                        <select id="feedback-category" class="w-full p-2 border rounded-lg">
+                            <option>Broken Streetlight</option>
+                            <option>Pothole</option>
+                            <option>Waste Not Collected</option>
+                            <option>Public Transport Issue</option>
+                            <option>Suggestion</option>
+                        </select>
+                        <textarea id="feedback-details" class="w-full p-2 border rounded-lg" rows="4" placeholder="Provide details and location..."></textarea>
+                        <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700">Submit Feedback</button>
+                    </form>
+                    <div id="feedback-confirmation" class="mt-6 text-center hidden">
+                        <p class="text-lg font-semibold text-green-600">Thank you! Your feedback has been submitted.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-sm text-gray-500 mt-6 py-4">
+            Built for a greener tomorrow. © 2025 EcoCity Connect.
+        </footer>
+    </div>
+
+    <script>
+        const views = document.querySelectorAll('.view-content');
+        const transportMapElement = document.getElementById('transport-map');
+        const routesMapElement = document.getElementById('routes-map');
+        let transportMap, routesMap;
+
+        // --- Mock Data ---
+        const busData = [
+            { id: 'Bus 101', route: 'Red Line', lat: 28.63, lon: 77.22, status: 'On Time' },
+            { id: 'Bus 202', route: 'Blue Line', lat: 28.61, lon: 77.23, status: 'Delayed' },
+            { id: 'Bus 303', route: 'Green Line', lat: 28.64, lon: 77.21, status: 'On Time' }
+        ];
+
+        const wasteSchedules = {
+            "connaught place": { day: "Monday, Thursday", type: "Mixed Waste" },
+            "karol bagh": { day: "Tuesday, Friday", type: "Segregated Waste" },
+            "saket": { day: "Wednesday, Saturday", type: "Mixed Waste" },
+        };
+        
+        const safeRoutesData = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "properties": { "name": "Well-lit Path A", "safety_level": "High" },
+                    "geometry": { "type": "LineString", "coordinates": [ [77.21, 28.63], [77.22, 28.635], [77.23, 28.63] ] }
+                },
+                 {
+                    "type": "Feature",
+                    "properties": { "name": "Monitored Route B", "safety_level": "High" },
+                    "geometry": { "type": "LineString", "coordinates": [ [77.22, 28.61], [77.225, 28.615], [77.22, 28.62] ] }
+                }
+            ]
+        };
+
+        function showView(viewName) {
+            views.forEach(view => {
+                if (view.id === `${viewName}-view`) {
+                    view.classList.remove('hidden');
+                } else {
+                    view.classList.add('hidden');
+                }
+            });
+
+            // Initialize maps only when their view is active and they haven't been initialized
+            if (viewName === 'transport' && !transportMap) {
+                initTransportMap();
+            }
+            if (viewName === 'routes' && !routesMap) {
+                initRoutesMap();
+            }
+        }
+
+        // --- Map Initializations ---
+        function initTransportMap() {
+             transportMap = L.map(transportMapElement).setView([28.6139, 77.2090], 12); // Centered on Delhi
+             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+             }).addTo(transportMap);
+             updateBusLocations();
+        }
+
+        function initRoutesMap() {
+            routesMap = L.map(routesMapElement).setView([28.6139, 77.2090], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(routesMap);
+            displaySafeRoutes();
+        }
+
+
+        // --- Transport Logic ---
+        function updateBusLocations() {
+             if (!transportMap) return;
+             // Clear existing markers
+             transportMap.eachLayer(layer => {
+                 if (layer instanceof L.Marker) {
+                     transportMap.removeLayer(layer);
+                 }
+             });
+
+            busData.forEach(bus => {
+                const icon = L.divIcon({
+                    html: `<div class="p-1 bg-blue-500 text-white rounded-full shadow-lg text-xs">${bus.id.split(' ')[1]}</div>`,
+                    className: '',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+                const marker = L.marker([bus.lat, bus.lon], { icon }).addTo(transportMap);
+                marker.bindPopup(`<b>${bus.id}</b><br>Route: ${bus.route}<br>Status: ${bus.status}`);
+            });
+            
+            // Simulate real-time movement
+            setTimeout(() => {
+                busData[0].lat += 0.001;
+                busData[1].lon -= 0.001;
+                updateBusLocations();
+            }, 5000);
+        }
+
+        function displayBusRoutes() {
+            const container = document.getElementById('bus-routes');
+            container.innerHTML = ''; // Clear previous
+            const routes = [...new Set(busData.map(b => b.route))]; // Get unique routes
+            routes.forEach(route => {
+                 const button = document.createElement('button');
+                 button.className = 'w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors';
+                 button.textContent = `Route: ${route}`;
+                 button.onclick = () => {
+                     // Filter and zoom to selected route buses (simplified)
+                     const routeBuses = busData.filter(b => b.route === route);
+                     if (routeBuses.length > 0) {
+                         transportMap.setView([routeBuses[0].lat, routeBuses[0].lon], 14);
+                     }
+                 };
+                 container.appendChild(button);
+            });
+        }
+        
+        // --- Waste Collection Logic ---
+        document.getElementById('waste-search').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const resultDiv = document.getElementById('waste-schedule');
+            const schedule = wasteSchedules[query];
+            if (schedule) {
+                resultDiv.innerHTML = `
+                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg">
+                        <p class="font-bold">Collection for ${query}</p>
+                        <p><strong>Days:</strong> ${schedule.day}</p>
+                        <p><strong>Type:</strong> ${schedule.type}</p>
+                    </div>
+                `;
+            } else if(query) {
+                 resultDiv.innerHTML = `<p class="text-red-500">No schedule found for this area.</p>`;
+            } else {
+                resultDiv.innerHTML = '';
+            }
+        });
+
+        // --- Safe Routes Logic ---
+        function displaySafeRoutes() {
+             if (!routesMap) return;
+             L.geoJSON(safeRoutesData, {
+                 style: function(feature) {
+                     return { color: "#ffc107", weight: 5, opacity: 0.7 };
+                 },
+                 onEachFeature: function (feature, layer) {
+                    layer.bindPopup(`<b>${feature.properties.name}</b><br>Safety Level: ${feature.properties.safety_level}`);
+                 }
+             }).addTo(routesMap);
+        }
+
+        // --- Carbon Footprint Logic ---
+        document.getElementById('carbon-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const electricity = parseFloat(document.getElementById('electricity').value) || 0;
+            const transport = parseFloat(document.getElementById('transport-km').value) || 0;
+            
+            // Factors (simplified for India)
+            const electricityFactor = 0.82; // kg CO2e per kWh
+            const transportFactor = 0.12; // kg CO2e per km (for a car)
+
+            const totalFootprint = (electricity * electricityFactor) + (transport * 30 * transportFactor);
+            const trees = (totalFootprint * 12 / 21).toFixed(1); // 21 kg CO2 absorbed by a tree per year
+
+            document.getElementById('footprint-value').textContent = totalFootprint.toFixed(2);
+            document.getElementById('tree-equivalent').textContent = trees;
+            document.getElementById('carbon-result').classList.remove('hidden');
+        });
+        
+         // --- Feedback Logic ---
+        document.getElementById('feedback-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const category = document.getElementById('feedback-category').value;
+            const details = document.getElementById('feedback-details').value;
+
+            if (!details) {
+                alert('Please provide some details for your feedback.');
+                return;
+            }
+            
+            console.log('Feedback submitted:', { category, details }); // In a real app, this would send data to a server
+
+            document.getElementById('feedback-form').reset();
+            const confirmation = document.getElementById('feedback-confirmation');
+            confirmation.classList.remove('hidden');
+            setTimeout(() => confirmation.classList.add('hidden'), 5000);
+        });
+        
+        // --- Clock ---
+        function updateClock() {
+            const now = new Date();
+            const options = { weekday: 'long', hour: 'numeric', minute: 'numeric', hour12: true, timeZone: 'Asia/Kolkata' };
+            document.getElementById('current-time').textContent = now.toLocaleDateString('en-US', options);
+        }
+        
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            showView('transport'); // Show transport view by default
+            displayBusRoutes();
+            updateClock();
+            setInterval(updateClock, 1000 * 60); // Update every minute
+        });
+    </script>
+</body>
+</html>
