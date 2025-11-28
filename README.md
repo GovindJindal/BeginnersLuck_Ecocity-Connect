@@ -58,5 +58,11 @@ The calculator uses the following simplified factors (per passenger-km or per un
 * **Metro:** 21 grams $\text{CO}_2\text{e}$ per km (due to electric grid)
 * **Electricity:** 0.8 kg $\text{CO}_2\text{e}$ per kWh (Approx. India Grid Factor)
 
----
-*Developed by Govind Jindal*
+---Team Members
+
+S.No	Name	Email	LinkedIn
+1	Piyush Sharma	piyush3183.beai25@chitkara.edu.in	LinkedIn
+2	Govind Jindal	govind3091.beai25@chitkara.edu.in	LinkedIn
+3	Bhavishya Grover	bhavishya3095.beai25@chitkara.edu.in	LinkedIn
+4 Krishna Bansal krishna3187.beai25@chitkara.edu.in 
+5 Vansh Kaushal vansh3162.beai25@chitkara.edu.in
