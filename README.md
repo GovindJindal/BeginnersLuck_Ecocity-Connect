@@ -1,5 +1,7 @@
 # 🌍 EcoCity Connect: Smart Services for a Sustainable City
 
+ https://govindjindal.github.io/BeginnersLuck_Ecocity-Connect/
+
 EcoCity Connect is a responsive web application designed to provide citizens with real-time, actionable insights into key public services, promoting a smarter and more sustainable urban life. It integrates data visualization, utility calculators, and feedback mechanisms within a modern, user-friendly interface.
 
 ## ✨ Features and Functionality
